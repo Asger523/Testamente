@@ -1,0 +1,20 @@
+﻿@page "/arvFordeling"
+
+@*
+"MudBlazor" NuGet Package | As taken from this source video:
+https://www.youtube.com/watch?v=08lN-o7rQgg
+*@
+
+<h3>Arv Fordeling</h3>
+
+<br />
+
+<MudBlazor.MudBlazor.MudPaper class="p-4" style="width: 100px; height: 100px;">
+    <MudBlazor.MudChart ChartType="MudBlazor.ChartType.Pie" InputData="@data" InputLabels="@classes" Width="50px;" Height="50px;"></MudBlazor.MudChart>
+</MudBlazor.MudBlazor.MudPaper>
+
+@code {
+    int datasize = 4;
+    double[] data = { 20, 10, 99, 44 };
+    string[] classes = { "Tante Alice", "Allan", "Beatrice", "Jakob" };
+}
