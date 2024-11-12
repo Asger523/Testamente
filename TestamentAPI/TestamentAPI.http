@@ -1,0 +1,6 @@
+@TestamentAPI_HostAddress = http://localhost:5044
+
+GET {{TestamentAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
