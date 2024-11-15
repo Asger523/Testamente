@@ -1,0 +1,29 @@
+﻿@page "/inheritance-piechart"
+@inject IJSRuntime JS
+
+<h3>Inheritance Distribution</h3>
+
+<canvas id="inheritanceChart" width="400" height="400"></canvas>
+<br />
+<br />
+
+<InheritancePieChart FamilyMembers="familyMembers" />
+@code {
+    [Parameter]
+    public List<FamilyMember> FamilyMembers { get; set; } = new List<FamilyMember>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("renderInheritanceChart", familyMembers);
+        }
+    }
+    private List<FamilyMember> familyMembers = new List<FamilyMember>
+    {
+        new FamilyMember { Name = "Alice", InheritanceShare = 40 },
+        new FamilyMember { Name = "Bob", InheritanceShare = 30 },
+        new FamilyMember { Name = "Charlie", InheritanceShare = 20 },
+        new FamilyMember { Name = "Diana", InheritanceShare = 10 }
+    };
+}
