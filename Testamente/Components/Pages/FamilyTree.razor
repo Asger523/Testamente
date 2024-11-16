@@ -1,0 +1,147 @@
+@page "/familytree"
+@using System.Collections.Generic
+
+<PageTitle>Family Tree</PageTitle>
+
+<h3>Family Tree</h3>
+
+<div class="tree">
+    @if (FamilyMembers != null)
+    {
+        <ul>
+            @foreach (var member in FamilyMembers)
+            {
+                <li>
+                    <div>@member.Name</div>
+                    @if (member.Children != null && member.Children.Count > 0)
+                    {
+                        <ul>
+                            @foreach (var child in member.Children)
+                            {
+                                <li>
+                                    <div>@child.Name</div>
+                                    @if (child.Children != null && child.Children.Count > 0)
+                                    {
+                                        <ul>
+                                            @foreach (var grandChild in child.Children)
+                                            {
+                                                <li><div>@grandChild.Name</div></li>
+                                            }
+                                        </ul>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+<style>
+.tree ul {
+    padding-top: 20px; position: relative;
+    transition: all 0.5s;
+}
+
+.tree li {
+    float: left; text-align: center;
+    list-style-type: none;
+    position: relative;
+    padding: 20px 5px 0 5px;
+    transition: all 0.5s;
+}
+
+.tree li::before, .tree li::after {
+    content: '';
+    position: absolute; top: 0; right: 50%;
+    border-top: 2px solid #ccc;
+    width: 50%; height: 20px;
+}
+
+.tree li::after {
+    right: auto; left: 50%;
+    border-left: 2px solid #ccc;
+}
+
+.tree li:only-child::after, .tree li:only-child::before {
+    display: none;
+}
+
+.tree li:only-child { padding-top: 0; }
+
+.tree li:first-child::before, .tree li:last-child::after {
+    border: 0 none;
+}
+
+.tree li:last-child::before {
+    border-right: 2px solid #ccc;
+    border-radius: 0 5px 0 0;
+}
+
+.tree li:first-child::after {
+    border-radius: 5px 0 0 0;
+}
+
+.tree div {
+    border: 2px solid #ccc;
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 5px;
+    transition: all 0.5s;
+}
+
+.tree div:hover, .tree div:hover + ul li div {
+    background: #c8e4f8; color: #000; border: 2px solid #94a0b4;
+}
+
+.tree div:hover + ul li::after, 
+.tree div:hover + ul li::before, 
+.tree div:hover + ul::before, 
+.tree div:hover + ul ul::before {
+    border-color: #94a0b4;
+}
+</style>
+
+@code {
+    public class FamilyMember
+    {
+        public string Name { get; set; }
+        public List<FamilyMember> Children { get; set; }
+    }
+
+    private List<FamilyMember> FamilyMembers;
+
+    protected override void OnInitialized()
+    {
+        FamilyMembers = new List<FamilyMember>
+        {
+            new FamilyMember
+            {
+                Name = "Grandparent",
+                Children = new List<FamilyMember>
+                {
+                    new FamilyMember
+                    {
+                        Name = "Parent",
+                        Children = new List<FamilyMember>
+                        {
+                            new FamilyMember { Name = "Child 1" },
+                            new FamilyMember { Name = "Child 2" }
+                        }
+                    },
+                    new FamilyMember
+                    {
+                        Name = "Uncle/Aunt",
+                        Children = new List<FamilyMember>
+                        {
+                            new FamilyMember { Name = "Cousin 1" },
+                            new FamilyMember { Name = "Cousin 2" }
+                        }
+                    }
+                }
+            }
+        };
+    }
+}
