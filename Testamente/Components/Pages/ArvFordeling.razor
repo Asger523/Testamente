@@ -1,5 +1,7 @@
 ﻿@page "/arvFordeling"
 
+@rendermode InteractiveServer
+
 @*
 "MudBlazor" NuGet Package | As taken from this source video:
 https://www.youtube.com/watch?v=08lN-o7rQgg
@@ -9,12 +11,191 @@ https://www.youtube.com/watch?v=08lN-o7rQgg
 
 <br />
 
-<MudBlazor.MudBlazor.MudPaper class="p-4" style="width: 100px; height: 100px;">
-    <MudBlazor.MudChart ChartType="MudBlazor.ChartType.Pie" InputData="@data" InputLabels="@classes" Width="50px;" Height="50px;"></MudBlazor.MudChart>
-</MudBlazor.MudBlazor.MudPaper>
+
+<PieChart @ref="pieChart" Width="500" />
+
+<div class="mt-5">
+    <Button Type="BlazorBootstrap.ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="async () => await RandomizeAsync()"> Randomize </Button>
+    <Button Type="BlazorBootstrap.ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="async () => await AddDatasetAsync()"> Add Dataset </Button>
+    <Button Type="BlazorBootstrap.ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="async () => await AddDataAsync()">Add Data</Button>
+</div>
+
+<br />
+<br />
+
+@* <Button Type="ButtonType.Button" Color="ButtonColor.Primary" Size="ButtonSize.Small" @onclick="async () => await Create_Specific_PieChart()">Own Pie Chart Button</Button> *@
 
 @code {
-    int datasize = 4;
-    double[] data = { 20, 10, 99, 44 };
-    string[] classes = { "Tante Alice", "Allan", "Beatrice", "Jakob" };
+    private PieChart pieChart = default!;
+    private PieChartOptions pieChartOptions = default!;
+    private ChartData chartData = default!;
+    private string[]? backgroundColors;
+
+    private int datasetsCount = 0;
+    private int dataLabelsCount = 0;
+
+    private Random random = new();
+
+    async Task Create_Specific_PieChart ()
+    {
+        //pieChart = new PieChart();
+        pieChartOptions = new PieChartOptions();
+        pieChartOptions.Responsive = true;
+        pieChartOptions.Plugins.Title!.Text = "Arv Fordeling";
+        pieChartOptions.Plugins.Title.Display = true;
+
+        //backgroundColors = ColorUtility.CategoricalTwelveColors;
+        //backgroundColors = new string[] { "ff0000", "ee00ff", "1c00ff", "00fff3", "f000000", "f000000", "f000000", "f000000", "f000000", "f000000", "f000000", "f000000" };
+
+        List<string> pcdl = new List<string> {"Dan", "Prime", "Jonathan", "Louis'" };
+
+        var datasets = new List<IChartDataset> ();
+        string labelOfPieWhenHovered = "";// "Set This If You Want";
+        datasets.Add (new PieChartDataset { Label = $"{labelOfPieWhenHovered}", Data = new List<double?> { 50, 25, 13, 12 }, BackgroundColor = new List<string> { "#00ff1a", "#ee00ff", "#1c00ff", "#00fff3" } });
+        //datasets.Add (new PieChartDataset { Label = $"Team {datasetsCount}", Data = new List<double?> { 25 }, BackgroundColor = new List<string> { "#ff0000" } });
+        // datasets.Add (new PieChartDataset { Label = $"Team {datasetsCount}", Data = new List<double?> { 25 }, BackgroundColor = new List<string> { "#1c00ff" } });
+        // datasets.Add (new PieChartDataset { Label = $"Team {datasetsCount}", Data = new List<double?> { 25 }, BackgroundColor = new List<string> { "#00fff3" } });
+
+        chartData = new ChartData { Labels = pcdl /* GetDefaultDataLabels (4) */, Datasets = datasets };
+    }
+
+    protected override void OnInitialized()
+    {
+        backgroundColors = ColorUtility.CategoricalTwelveColors;
+        chartData = new ChartData { Labels = GetDefaultDataLabels(4), Datasets = GetDefaultDataSets(1) };
+
+        pieChartOptions = new();
+        pieChartOptions.Responsive = true;
+        pieChartOptions.Plugins.Title!.Text = "Arv Fordeling";
+        pieChartOptions.Plugins.Title.Display = true;
+
+        Create_Specific_PieChart();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await pieChart.InitializeAsync(chartData, pieChartOptions);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task RandomizeAsync()
+    {
+        if (chartData is null || chartData.Datasets is null || !chartData.Datasets.Any()) return;
+
+        var newDatasets = new List<IChartDataset>();
+
+        foreach (var dataset in chartData.Datasets)
+        {
+            if (dataset is PieChartDataset pieChartDataset
+                && pieChartDataset is not null
+                && pieChartDataset.Data is not null)
+            {
+                var count = pieChartDataset.Data.Count;
+
+                var newData = new List<double?>();
+                for (var i = 0; i < count; i++)
+                {
+                    newData.Add(random.Next(0, 100));
+                }
+
+                pieChartDataset.Data = newData;
+                newDatasets.Add(pieChartDataset);
+            }
+        }
+
+        chartData.Datasets = newDatasets;
+
+        await pieChart.UpdateAsync(chartData, pieChartOptions);
+    }
+
+    private async Task AddDatasetAsync()
+    {
+        if (chartData is null || chartData.Datasets is null) return;
+
+        var chartDataset = GetRandomPieChartDataset();
+        chartData = await pieChart.AddDatasetAsync(chartData, chartDataset, pieChartOptions);
+    }
+
+    private async Task AddDataAsync()
+    {
+        if (dataLabelsCount >= 12)
+            return;
+
+        if (chartData is null || chartData.Datasets is null)
+            return;
+
+        var data = new List<IChartDatasetData>();
+        foreach (var dataset in chartData.Datasets)
+        {
+            if (dataset is PieChartDataset pieChartDataset)
+                data.Add(new PieChartDatasetData(pieChartDataset.Label, random.Next(0, 100), backgroundColors![dataLabelsCount]));
+        }
+
+        chartData = await pieChart.AddDataAsync(chartData, GetNextDataLabel(), data);
+
+        dataLabelsCount += 1;
+    }
+
+    #region Data Preparation
+
+    private List<IChartDataset> GetDefaultDataSets(int numberOfDatasets)
+    {
+        var datasets = new List<IChartDataset>();
+
+        for (var index = 0; index < numberOfDatasets; index++)
+        {
+            datasets.Add(GetRandomPieChartDataset());
+        }
+
+        return datasets;
+    }
+
+    private PieChartDataset GetRandomPieChartDataset()
+    {
+        datasetsCount += 1;
+        return new() { Label = $"Team {datasetsCount}", Data = GetRandomData(), BackgroundColor = GetRandomBackgroundColors() };
+    }
+
+    private List<double?> GetRandomData()
+    {
+        var data = new List<double?>();
+        for (var index = 0; index < dataLabelsCount; index++)
+        {
+            data.Add(random.Next(0, 100));
+        }
+
+        return data;
+    }
+
+    private List<string> GetRandomBackgroundColors()
+    {
+        var colors = new List<string>();
+        for (var index = 0; index < dataLabelsCount; index++)
+        {
+            colors.Add(backgroundColors![index]);
+        }
+
+        return colors;
+    }
+
+    private List<string> GetDefaultDataLabels(int numberOfLabels)
+    {
+        var labels = new List<string>();
+        for (var index = 0; index < numberOfLabels; index++)
+        {
+            labels.Add(GetNextDataLabel());
+            dataLabelsCount += 1;
+        }
+
+        return labels;
+    }
+
+    private string GetNextDataLabel() => $"Product {dataLabelsCount + 1}";
+
+    private string GetNextDataBackgrounfColor() => backgroundColors![dataLabelsCount];
+
+    #endregion  Data Preparation
 }
