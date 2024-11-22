@@ -36,30 +36,31 @@ https://www.youtube.com/watch?v=08lN-o7rQgg
 
     private Random random = new();
 
-    async Task Create_Specific_PieChart ()
+    async Task Create_Specific_PieChart (List<string> personsToShow, List<double?> personPercentages)
     {
-        //pieChart = new PieChart();
+        //pieChart = new PieChart(); // Shouldn't be necessary
         pieChartOptions = new PieChartOptions();
         pieChartOptions.Responsive = true;
         pieChartOptions.Plugins.Title!.Text = "Arv Fordeling";
         pieChartOptions.Plugins.Title.Display = true;
 
-        //backgroundColors = ColorUtility.CategoricalTwelveColors;
+        //backgroundColors = ColorUtility.CategoricalTwelveColors; // For reference
         //backgroundColors = new string[] { "ff0000", "ee00ff", "1c00ff", "00fff3", "f000000", "f000000", "f000000", "f000000", "f000000", "f000000", "f000000", "f000000" };
 
-        List<string> pcdl = new List<string> {"Dan", "Prime", "Jonathan", "Louis'" };
+        //List<string> pcdl = new List<string> {"Dan", "Prime", "Jonathan", "Louis'" };
 
         var datasets = new List<IChartDataset> ();
-        string labelOfPieWhenHovered = "";// "Set This If You Want";
-        datasets.Add (new PieChartDataset { Label = $"{labelOfPieWhenHovered}", Data = new List<double?> { 50, 25, 13, 12 }, BackgroundColor = new List<string> { "#00ff1a", "#ee00ff", "#1c00ff", "#00fff3" } });
-        //datasets.Add (new PieChartDataset { Label = $"Team {datasetsCount}", Data = new List<double?> { 25 }, BackgroundColor = new List<string> { "#ff0000" } });
-        // datasets.Add (new PieChartDataset { Label = $"Team {datasetsCount}", Data = new List<double?> { 25 }, BackgroundColor = new List<string> { "#1c00ff" } });
-        // datasets.Add (new PieChartDataset { Label = $"Team {datasetsCount}", Data = new List<double?> { 25 }, BackgroundColor = new List<string> { "#00fff3" } });
+        string labelOfPieWhenHovered = "Hover Test";// "Set This If You Want";
+        //datasets.Add (new PieChartDataset { Label = $"{labelOfPieWhenHovered}", Data = new List<double?> { 50, 25, 13, 12 }/* , BackgroundColor = new List<string> { "#00ff1a", "#ee00ff", "#1c00ff", "#00fff3" } */ });
 
-        chartData = new ChartData { Labels = pcdl /* GetDefaultDataLabels (4) */, Datasets = datasets };
+        // Et dataset er en af 'indercirklerne' i cirkel-diagrammet
+        datasets.Add (new PieChartDataset { Label = $"{labelOfPieWhenHovered}", Data = personPercentages/* , BackgroundColor = new List<string> { "#00ff1a", "#ee00ff", "#1c00ff", "#00fff3" } */ });
+
+        //chartData = new ChartData { Labels = pcdl /* GetDefaultDataLabels (4) */, Datasets = datasets }; // Test example
+        chartData = new ChartData { Labels = personsToShow, Datasets = datasets };
     }
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
         backgroundColors = ColorUtility.CategoricalTwelveColors;
         chartData = new ChartData { Labels = GetDefaultDataLabels(4), Datasets = GetDefaultDataSets(1) };
@@ -69,7 +70,8 @@ https://www.youtube.com/watch?v=08lN-o7rQgg
         pieChartOptions.Plugins.Title!.Text = "Arv Fordeling";
         pieChartOptions.Plugins.Title.Display = true;
 
-        Create_Specific_PieChart();
+        // This is an example so the page isn't blank
+        await Create_Specific_PieChart(new List<string> {"Dan", "Dan-2", "Dan-4"}, new List<double?> { 50, 49, 2 });
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
