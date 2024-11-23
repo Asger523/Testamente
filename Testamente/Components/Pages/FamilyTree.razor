@@ -1,7 +1,7 @@
 @page "/familytree"
 @using System.Collections.Generic
 
-<PageTitle>Family Tree</PageTitle>
+<PageTitle>Arve træ</PageTitle>
 
 <h3>Family Tree</h3>
 
@@ -12,20 +12,31 @@
             @foreach (var member in FamilyMembers)
             {
                 <li>
-                    <div>@member.Name</div>
+                    <div class="member">
+                        <span>@member.Name</span>
+                        <button @onclick="() => AddChild(member)">Add Parent</button>
+                    </div>
                     @if (member.Children != null && member.Children.Count > 0)
                     {
                         <ul>
                             @foreach (var child in member.Children)
                             {
                                 <li>
-                                    <div>@child.Name</div>
+                                    <div class="member">
+                                        <span>@child.Name</span>
+                                        <button @onclick="() => AddChild(child)">Add Child</button>
+                                    </div>
                                     @if (child.Children != null && child.Children.Count > 0)
                                     {
                                         <ul>
                                             @foreach (var grandChild in child.Children)
                                             {
-                                                <li><div>@grandChild.Name</div></li>
+                                                <li>
+                                                    <div class="member">
+                                                        <span>@grandChild.Name</span>
+                                                        <button @onclick="() => AddChild(grandChild)">Add Child</button>
+                                                    </div>
+                                                </li>
                                             }
                                         </ul>
                                     }
@@ -84,22 +95,37 @@
     border-radius: 5px 0 0 0;
 }
 
-.tree div {
+.tree .member {
     border: 2px solid #ccc;
     padding: 5px 10px;
     display: inline-block;
     border-radius: 5px;
     transition: all 0.5s;
+    position: relative;
 }
 
-.tree div:hover, .tree div:hover + ul li div {
+.tree .member span {
+    display: block;
+}
+
+.tree .member button {
+    display: block;
+    margin-top: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+.tree .member:hover, .tree .member:hover + ul li .member {
     background: #c8e4f8; color: #000; border: 2px solid #94a0b4;
 }
 
-.tree div:hover + ul li::after, 
-.tree div:hover + ul li::before, 
-.tree div:hover + ul::before, 
-.tree div:hover + ul ul::before {
+.tree .member:hover + ul li::after, 
+.tree .member:hover + ul li::before, 
+.tree .member:hover + ul::before, 
+.tree .member:hover + ul ul::before {
     border-color: #94a0b4;
 }
 </style>
@@ -143,5 +169,10 @@
                 }
             }
         };
+    }
+
+    private void AddChild(FamilyMember member)
+    {
+        Console.WriteLine($"Add child to {member.Name}");
     }
 }
