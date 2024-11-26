@@ -14,8 +14,8 @@
 
         private static List<Inheritor> inheritors = new List<Inheritor>
         {
-                 new Inheritor ("Torben Torbensen", Gender.Male, InheritancePriority.First, "Son", 42, "Hurtigvej 44, 5000 Odense"),
-                  new Inheritor ("Karstine Torbensen", Gender.Other, InheritancePriority.First, "Both", 37, "Hurtigvej 50, 5000 Odense"),
+                 new Inheritor ("Torben Torbensen", Gender.Male, InheritancePriority.First, "Son", new DateOnly(1985,03,27), "Hurtigvej 44, 5000 Odense"),
+                  new Inheritor ("Karstine Torbensen", Gender.Other, InheritancePriority.First, "Both", new DateOnly(1990,06,30), "Hurtigvej 50, 5000 Odense"),
                 };
 
         public static void AddInheritor(Inheritor inheritor)
@@ -58,7 +58,7 @@
                 inheritorToUpdate.Gender = inheritor.Gender;
                 inheritorToUpdate.InheritancePriority = inheritor.InheritancePriority;
                 inheritorToUpdate.Relation = inheritor.Relation;
-                inheritorToUpdate.Age = inheritor.Age;
+                inheritorToUpdate.Birthdate = inheritor.Birthdate;
                 inheritorToUpdate.Address = inheritor.Address;
             }
         }
