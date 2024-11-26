@@ -14,7 +14,18 @@
         public Gender Gender { get; set; } = Gender.Other;
         public InheritancePriority? InheritancePriority { get; set; }
         public string? Relation { get; set; }
-        public int Age { get; set; }
+        public DateOnly? Birthdate { get; set; }
         public string? Address { get; set; }
+
+
+        public Inheritor(string? name, Gender gender, InheritancePriority? inheritancePriority, string? relation, DateOnly? birthdate, string? address)
+        {
+            Name = name;
+            Gender = gender;
+            InheritancePriority = inheritancePriority;
+            Relation = relation;
+            Birthdate = birthdate;
+            Address = address;
+        }
     }
 }
