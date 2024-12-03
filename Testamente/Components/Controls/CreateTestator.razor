@@ -1,0 +1,32 @@
+<EditForm Model="@testator" class="container mt-4">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="alert alert-danger" />
+
+<h5>Indtastning for testator:</h5>
+<div class="mb-3">
+<label for="name" class="form-label">Name:</label>
+<InputText id="name" @bind-Value="testator.Name" class="form-control" placeholder="Skriv dit navn her"/>
+</div>
+<div class="mb-3">
+        <label for="gender" class="form-label">Gender:</label>
+        <InputSelect id="gender" @bind-Value="testator.Gender" class="form-select">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </InputSelect>
+</div>
+<div class="mb-3">
+<label for="phoneNumber" class="form-label">Phone Number:</label>
+<InputText id="phoneNumber" @bind-Value="testator.PhoneNumber" class="form-control" placeholder="+45 XXXXXXXX" />
+</div>
+<div class="mb-3">
+<label for="email" class="form-label">Email:</label>
+<InputText id="email" @bind-Value="testator.Email" class="form-control" placeholder="eksempel@email.dk" />
+</div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    Testator testator = new Testator();
+}

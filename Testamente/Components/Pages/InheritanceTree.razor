@@ -1,0 +1,33 @@
+﻿@page "/arvetræ"
+@using Testamente.Components.Controls
+@rendermode InteractiveServer
+
+<h3>Arvetræ</h3>
+
+<button class="btn btn-primary" @onclick="ToggleTestatorVisibility">Opret testator</button>
+<button class="btn btn-primary" @onclick="ToggleInheritorVisibility">Opret arving</button>
+
+@if (testatorVisible)
+{
+    <CreateTestator></CreateTestator>
+}
+
+@if (inheritorVisible)
+{
+    <CreateInheritor></CreateInheritor>
+}
+
+@code {
+    private bool testatorVisible = false;
+    private bool inheritorVisible = false;
+
+    private void ToggleTestatorVisibility()
+    {
+        testatorVisible = !testatorVisible;
+        //StateHasChanged(); - Not needed.
+    }
+    private void ToggleInheritorVisibility()
+    {
+        inheritorVisible = !inheritorVisible;
+    }
+}

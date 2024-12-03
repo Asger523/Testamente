@@ -17,7 +17,9 @@
         public DateOnly? Birthdate { get; set; }
         public string? Address { get; set; }
 
-
+        public Inheritor()
+        {
+        }
         public Inheritor(string? name, Gender gender, InheritancePriority? inheritancePriority, string? relation, DateOnly? birthdate, string? address)
         {
             Name = name;
