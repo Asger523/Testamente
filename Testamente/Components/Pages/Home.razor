@@ -1,7 +1,45 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Arvetræ</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Velkommen!</h1>
+<br />
+Ønsker du at se hvordan din arv kan blive fordelt, når du engang er væk? Så prøv vores testamente udregner.
+<br />
+Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hvad du selv kan påvirke.
+<br />
+(Arvetræ)
 
-Welcome to your new app.
+<br />
+<br />
+<br />
+<br />
+
+<button class="btn btn-primary" @onclick="ToggleTestatorVisibility">Opret testator</button>
+<button class="btn btn-primary" @onclick="ToggleInheritorVisibility">Opret arving</button>
+
+@if (testatorVisible)
+{
+    <CreateTestator></CreateTestator>
+}
+
+@if (inheritorVisible)
+{
+    <CreateInheritor></CreateInheritor>
+}
+
+@code {
+    private bool testatorVisible = false;
+    private bool inheritorVisible = false;
+
+    private void ToggleTestatorVisibility()
+    {
+        testatorVisible = !testatorVisible;
+        //StateHasChanged(); - Not needed.
+    }
+    private void ToggleInheritorVisibility()
+    {
+        inheritorVisible = !inheritorVisible;
+    }
+}
