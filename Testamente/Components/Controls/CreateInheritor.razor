@@ -1,8 +1,8 @@
-<h5>Indtastning for arving</h5>
 <EditForm Model="@inheritor" class="container mt-4">
     <DataAnnotationsValidator />
     <ValidationSummary class="alert alert-danger" />
 
+<h5>Indtastning for arving</h5>
     <div class="mb-3">
         <label for="name" class="form-label">Name:</label>
         <InputText id="name" @bind-Value="inheritor.Name" class="form-control" />
