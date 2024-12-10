@@ -1,8 +1,8 @@
-<h5>Indtastning for arving</h5>
 <EditForm Model="@inheritor" class="container mt-4">
     <DataAnnotationsValidator />
     <ValidationSummary class="alert alert-danger" />
 
+    <h5>Indtastning for Arving</h5>
     <div class="mb-3">
         <label for="name" class="form-label">Name:</label>
         <InputText id="name" @bind-Value="inheritor.Name" class="form-control" />
@@ -38,9 +38,32 @@
         <label for="address" class="form-label">Address:</label>
         <InputText id="address" @bind-Value="inheritor.Address" class="form-control" />
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" @onclick="Add_Inheritor" class="btn btn-primary">Submit</button>
 </EditForm>
 
 @code {
-    Inheritor inheritor = new Inheritor();
+    public Person PersonWeAreMakingAnInheritorFor { get; set; } = new Person();
+    public Inheritor inheritor = new Inheritor();
+    // List<Inheritor> 
+
+    async void Add_Inheritor () {
+        //InheritorTempRepo.AddInheritor (inheritor);
+        PersonWeAreMakingAnInheritorFor.Inheritors.Add(inheritor);
+
+        // Trigger the event callback to invoke method in the parent component
+        if (OnSubmitCallback.HasDelegate)
+        {
+            await OnSubmitCallback.InvokeAsync(); // Trigger the parent's method
+        }
+    }
+
+
+
+    // "EventCallback" som modtager et event fra "Home.razor"-siden
+    // Naar vi saa klikker paa vores Submit-knap, trigger vi det her event
+    // Vi behöver dette fordi vores metode til at gemme denne component's form ligger paa Home-pagen (og ikke heri)
+    // Saa vi "ringer tilbage" for at trigger den, via CallBack'et!
+
+    // NOTE Det bliver kaldt opp i "Submit_New_Testator()"
+    [Parameter] public EventCallback OnSubmitCallback { get; set; }
 }

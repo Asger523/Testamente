@@ -4,14 +4,9 @@
     {
        First, Second, Third, Fourth
     }
-    public enum Gender
+    
+    public class Inheritor : Person
     {
-        Male, Female, Other
-    }
-    public class Inheritor
-    {
-        public string? Name { get; set; }
-        public Gender Gender { get; set; } = Gender.Other;
         public InheritancePriority? InheritancePriority { get; set; }
         public string? Relation { get; set; }
         public DateOnly? Birthdate { get; set; }
@@ -20,6 +15,7 @@
         public Inheritor()
         {
         }
+
         public Inheritor(string? name, Gender gender, InheritancePriority? inheritancePriority, string? relation, DateOnly? birthdate, string? address)
         {
             Name = name;
