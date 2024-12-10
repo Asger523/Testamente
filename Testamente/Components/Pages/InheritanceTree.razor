@@ -1,20 +1,8 @@
-﻿@page "/"
+﻿@page "/arvetræ"
+@using Testamente.Components.Controls
 @rendermode InteractiveServer
 
-<PageTitle>Arvetræ</PageTitle>
-
-<h1>Velkommen!</h1>
-<br />
-Ønsker du at se hvordan din arv kan blive fordelt, når du engang er væk? Så prøv vores testamente udregner.
-<br />
-Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hvad du selv kan påvirke.
-<br />
-(Arvetræ)
-
-<br />
-<br />
-<br />
-<br />
+<h3>Arvetræ</h3>
 
 <button class="btn btn-primary" @onclick="ToggleTestatorVisibility">Opret testator</button>
 <button class="btn btn-primary" @onclick="ToggleInheritorVisibility">Opret arving</button>
