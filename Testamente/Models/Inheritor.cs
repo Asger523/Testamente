@@ -11,6 +11,7 @@
         public string? Relation { get; set; }
         public DateOnly? Birthdate { get; set; }
         public string? Address { get; set; }
+        public float Percentage { get; set; }
 
         public Inheritor()
         {
