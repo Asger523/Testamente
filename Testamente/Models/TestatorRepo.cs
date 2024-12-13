@@ -33,6 +33,7 @@
                 testatorToUpdate.Gender = testator.Gender;
                 testatorToUpdate.PhoneNumber = testator.PhoneNumber;
                 testatorToUpdate.Email = testator.Email;
+               
             }
         }
 

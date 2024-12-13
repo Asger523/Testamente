@@ -11,5 +11,7 @@
         public Gender Gender { get; set; } = Gender.Other;
 
         public List<Inheritor> Inheritors { get; set; } = new List<Inheritor>();
+
+        
     }
 }
