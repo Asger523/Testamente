@@ -16,30 +16,165 @@ Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hv
 <br />
 <br />
 
-<button class="btn btn-primary" @onclick="ToggleTestatorVisibility">Opret testator</button>
-<button class="btn btn-primary" @onclick="ToggleInheritorVisibility">Opret arving</button>
+@* <button class="btn btn-primary" @onclick="ToggleTestatorVisibility()">Opret testator</button> *@
+@* <button class="btn btn-primary" @onclick="ToggleInheritorVisibility">Opret arving</button> *@
+
+@* <Button class="btn btn-primary" @onclick="Build_InheritanceTree">Opdatér ArveTrae</Button> *@
+
+<button @onclick="() => ToggleTestatorVisibility(null)">Tilföj Testator</button>
+
+
+@* TODO Dette skal omskrives til en metode, som automatisk loop'er igennem alle Testatorer, 
+og saa fortsaetter med at loop'e igennem alle under-elementer (Inheritors for et given element) *@
+<div class="tree">
+    @if (InheritorList != null)
+    {
+        <ul>
+            @foreach (var testator in Testators)
+            {
+                <li>
+                    <div class="member">
+                        <span>@testator.Name</span>
+                        @* <button @onclick="() => Add_Child(testator, createInheritorRef.inheritor)">Tilföj Underperson</button> *@
+                        <button @onclick="@(() => ToggleInheritorVisibility (@testator))">Tilföj Underperson</button>
+                    </div>
+
+                    @if (testator.Inheritors != null && testator.Inheritors.Count > 0)
+                    {
+                        <ul>
+                            @foreach (var child in testator.Inheritors)
+                            {
+                                <li>
+                                    <div class="member">
+                                        <span>@child.Name</span>
+                                        @* <button @onclick="() => Add_Child(testator, child)">Tilföj Underperson</button> *@
+                                        <button @onclick="@(() => ToggleInheritorVisibility (@child))">Tilföj Underperson</button>
+                                    </div>
+                                    @if (child.Inheritors != null && child.Inheritors.Count > 0)
+                                    {
+                                        <ul>
+                                            @foreach (var grandChild in child.Inheritors)
+                                            {
+                                                <li>
+                                                    <div class="member">
+                                                        <span>@grandChild.Name</span>
+                                                        @* <button @onclick="() => Add_Child(child, grandChild)">Tilföj Underperson</button> *@
+                                                        <button @onclick="@(() => ToggleInheritorVisibility (@grandChild))">Tilföj Underperson</button>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
+    }
+</div>
 
 @if (testatorVisible)
 {
-    <CreateTestator></CreateTestator>
+    <CreateTestator @ref="createTestatorRef" OnSubmitCallback="HandleSubmit"></CreateTestator>
 }
 
 @if (inheritorVisible)
 {
-    <CreateInheritor></CreateInheritor>
+    <CreateInheritor @ref="createInheritorRef" OnSubmitCallback="InheritorHandleSubmit"></CreateInheritor>
 }
 
 @code {
-    private bool testatorVisible = false;
-    private bool inheritorVisible = false;
 
-    private void ToggleTestatorVisibility()
+    // Naar siden er loadet...
+    protected override void OnInitialized () {
+        // Her vil vi gerne starte med at bygge vores basis-trae (som har en enkelt testator; paakraevet af vores kode for overhovedet at vise noget)
+        Build_InheritanceTree();
+    }
+
+
+
+    // Variabel saa vi ka' skifte mellem at vise & ikke at vise testator-indtastnings-formularen
+    private bool testatorVisible = false;
+
+    private CreateTestator? createTestatorRef;
+    private Person? pendingTestator;
+    private void ToggleTestatorVisibility(Person theTestatorWeAreCreating)
     {
         testatorVisible = !testatorVisible;
         //StateHasChanged(); - Not needed.
+
+        if (testatorVisible) 
+        {
+            pendingTestator = theTestatorWeAreCreating;
+        }
     }
-    private void ToggleInheritorVisibility()
+
+    // Metode der bliver kaldt, naar Testator-formularen's Submit-knap bliver klikket
+    private async Task HandleSubmit()
+    {
+        // This is the method that gets triggered from the Submit button inside CreateTestator
+        //Console.WriteLine("Submit clicked on parent page!");
+        ToggleTestatorVisibility(null);
+    }
+
+
+
+    private bool inheritorVisible = false;
+    private Person? pendingPerson;
+    private CreateInheritor? createInheritorRef;
+
+    private void ToggleInheritorVisibility(Person thePersonWeAreCreatingInheritorFor)
     {
         inheritorVisible = !inheritorVisible;
+
+        if (inheritorVisible)
+        {
+            // Store the person temporarily
+            pendingPerson = thePersonWeAreCreatingInheritorFor;
+        }
     }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (inheritorVisible && createInheritorRef != null && pendingPerson != null)
+        {
+            // Now safely set the property
+            createInheritorRef.PersonWeAreMakingAnInheritorFor = pendingPerson;
+
+            // Clear pending person
+            pendingPerson = null;
+        }
+    }
+
+    // Metode der bliver kaldt, naar Testator-formularen's Submit-knap bliver klikket
+    private async Task InheritorHandleSubmit()
+    {
+        // This is the method that gets triggered from the Submit button inside CreateTestator
+        //Console.WriteLine("Submit clicked on parent page!");
+        ToggleInheritorVisibility(null);
+    }
+
+
+
+
+
+
+
+
+    private List<Testator> Testators = TestatorRepo.GetTestators();
+    private List<Inheritor> InheritorList;
+
+    void Build_InheritanceTree () {
+        // Build the tree based on testator(s) & inheritortemprepo
+
+        Testators = TestatorRepo.GetTestators(); //new List<Testator>() { new Testator ("Kresten Korbinus") };
+        InheritorList = InheritorTempRepo.GetInheritors();
+    }
+
+    public void Add_Child (Person personToAddTo, Inheritor newInheritoree) {
+        personToAddTo.Inheritors.Add(newInheritoree);
+    }
+
 }

@@ -1,6 +1,6 @@
 ﻿namespace Testamente.Models
 {
-    public class InheritorTempRepo
+    public static class InheritorTempRepo
     {
         // Intet data må persistere, når brugeren forlader siden.
 
@@ -16,18 +16,20 @@
         {
                  new Inheritor ("Torben Torbensen", Gender.Male, InheritancePriority.First, "Son", new DateOnly(1985,03,27), "Hurtigvej 44, 5000 Odense"),
                   new Inheritor ("Karstine Torbensen", Gender.Other, InheritancePriority.First, "Both", new DateOnly(1990,06,30), "Hurtigvej 50, 5000 Odense"),
-                };
+        };
 
         public static void AddInheritor(Inheritor inheritor)
         {
             inheritors.Add(inheritor);
         }
 
-        //Det hele skal gåes igennem. Det er mæh
+        public static List<Inheritor> GetInheritors() => inheritors;
 
-        public static List<Inheritor> GetInheritor() => inheritors;
-
-        public static List<Inheritor> GetInheritorName(string inheritorName) => inheritors.Where(i => i.Name.Equals(inheritorName, StringComparison.OrdinalIgnoreCase)).ToList();
+        // We could possibly have more Inheritors in our list with the same name
+        // If so, this will always only return the first person, which can be a problem if
+        // we want the second or subsequent people instead
+        // TL;DR Fix later!
+        public static Inheritor GetInheritorByName(string inheritorName) => inheritors.First(i => i.Name.Equals(inheritorName, StringComparison.OrdinalIgnoreCase));
 
         //public static Inheritor? GetInheritorByName(int id)
         //{
@@ -46,7 +48,6 @@
         //}
 
         // Vi søger på navne, det kan måske skabe problemer i forhold til, at 2 mennesker godt kan hedde det samme.
-
         public static void UpdateInheritor(string inheritorName, Inheritor inheritor)
         {
             if (inheritorName != inheritor.Name) return;

@@ -1,0 +1,89 @@
+﻿/*namespace Testamente.wwwroot.css*/
+
+.tree ul {
+    padding-top: 20px;
+    position: relative;
+    transition: all 0.5s;
+}
+
+.tree li {
+    float: left;
+    text-align: center;
+    list-style-type: none;
+    position: relative;
+    padding: 20px 5px 0 5px;
+    transition: all 0.5s;
+}
+
+    .tree li::before, .tree li::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 50%;
+        border-top: 2px solid #ccc;
+        width: 50%;
+        height: 20px;
+    }
+
+    .tree li::after {
+        right: auto;
+        left: 50%;
+        border-left: 2px solid #ccc;
+    }
+
+    .tree li:only-child::after, .tree li:only-child::before {
+        display: none;
+    }
+
+    .tree li:only-child {
+        padding-top: 0;
+    }
+
+    .tree li:first-child::before, .tree li:last-child::after {
+        border: 0 none;
+    }
+
+    .tree li:last-child::before {
+        border-right: 2px solid #ccc;
+        border-radius: 0 5px 0 0;
+    }
+
+    .tree li:first-child::after {
+        border-radius: 5px 0 0 0;
+    }
+
+.tree .member {
+    border: 2px solid #ccc;
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 5px;
+    transition: all 0.5s;
+    position: relative;
+}
+
+    .tree .member span {
+        display: block;
+    }
+
+    .tree .member button {
+        display: block;
+        margin-top: 5px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        padding: 2px 5px;
+        cursor: pointer;
+    }
+
+    .tree .member:hover, .tree .member:hover + ul li .member {
+        background: #c8e4f8;
+        color: #000;
+        border: 2px solid #94a0b4;
+    }
+
+        .tree .member:hover + ul li::after,
+        .tree .member:hover + ul li::before,
+        .tree .member:hover + ul::before,
+        .tree .member:hover + ul ul::before {
+            border-color: #94a0b4;
+        }

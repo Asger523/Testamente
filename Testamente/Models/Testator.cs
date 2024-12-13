@@ -1,10 +1,24 @@
 ﻿namespace Testamente.Models
 {
-    public class Testator
+    public class Testator : Person
     {
-        public string? Name { get; set; }
-        public Gender Gender { get; set; } = Gender.Other;
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
+
+        public Testator ()
+        {
+
+        }
+
+        public Testator (string? newName)
+        {
+            Name = newName;
+        }
+
+        public Testator (string? phoneNumber, string? email)
+        {
+            PhoneNumber = phoneNumber;
+            Email = email;
+        }
     }
 }
