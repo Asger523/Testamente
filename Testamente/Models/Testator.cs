@@ -43,5 +43,12 @@
             PhoneNumber = phoneNumber;
             Email = email;
         }
+
+        // For presentation/testing purposes
+        public Testator (string? newName, List<Person> newInheritors)
+        {
+            Name = newName;
+            Inheritors = newInheritors;
+        }
     }
 }

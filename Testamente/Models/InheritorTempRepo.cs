@@ -15,7 +15,7 @@
         private static List<Inheritor> inheritors = new List<Inheritor>
         {
                  new Inheritor ("Torben Torbensen", Gender.Male, InheritancePriority.First, "Son", new DateOnly(1985,03,27), "Hurtigvej 44, 5000 Odense"),
-                  new Inheritor ("Karstine Torbensen", Gender.Other, InheritancePriority.First, "Both", new DateOnly(1990,06,30), "Hurtigvej 50, 5000 Odense"),
+                 new Inheritor ("Karstine Torbensen", Gender.Other, InheritancePriority.First, "Both", new DateOnly(1990,06,30), "Hurtigvej 50, 5000 Odense"),
         };
 
         public static void AddInheritor(Inheritor inheritor)
@@ -25,10 +25,10 @@
 
         public static List<Inheritor> GetInheritors() => inheritors;
 
-        // We could possibly have more Inheritors in our list with the same name
-        // If so, this will always only return the first person, which can be a problem if
-        // we want the second or subsequent people instead
-        // TL;DR Fix later!
+        // Vi har muligvis mere end 1 Inheritor i vores liste, med samme navn
+        // Hvis det er tilfaeldet, returnerer vi altid kun den förste, som kan vaere et problem hvis
+        // vi specifikt skal bruge nr. 2 eller andre end nr. 1 med det navn vi input'er
+        // TL;DR Fix senere!
         public static Inheritor GetInheritorByName(string inheritorName) => inheritors.First(i => i.Name.Equals(inheritorName, StringComparison.OrdinalIgnoreCase));
 
         //public static Inheritor? GetInheritorByName(int id)

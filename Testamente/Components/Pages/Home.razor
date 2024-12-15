@@ -1,6 +1,8 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 
+@inject IJSRuntime JSRuntime
+
 <PageTitle>Arvetræ</PageTitle>
 
 <h1>Velkommen!</h1>
@@ -21,63 +23,43 @@ Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hv
 
 @* <Button class="btn btn-primary" @onclick="Build_InheritanceTree">Opdatér ArveTrae</Button> *@
 
-<button @onclick="() => ToggleTestatorVisibility(null)">Tilföj Testator</button>
+<button @onclick="() => {ScrollToTestatorForm(); ToggleTestatorVisibility(null); }">Tilføj Testator</button>
 
+@* <br />
+<br />
+<br />
+<br /> *@
 
-@* TODO Dette skal omskrives til en metode, som automatisk loop'er igennem alle Testatorer, 
-og saa fortsaetter med at loop'e igennem alle under-elementer (Inheritors for et given element) *@
 <div class="tree">
-    @if (InheritorList != null)
-    {
-        <ul>
-            @foreach (var testator in Testators)
-            {
-                <li>
-                    <div class="member">
-                        <span>@testator.Name</span>
-                        @* <button @onclick="() => Add_Child(testator, createInheritorRef.inheritor)">Tilföj Underperson</button> *@
-                        <button @onclick="@(() => ToggleInheritorVisibility (@testator))">Tilföj Underperson</button>
-                    </div>
-
-                    @if (testator.Inheritors != null && testator.Inheritors.Count > 0)
-                    {
-                        <ul>
-                            @foreach (var child in testator.Inheritors)
-                            {
-                                <li>
-                                    <div class="member">
-                                        <span>@child.Name</span>
-                                        @* <button @onclick="() => Add_Child(testator, child)">Tilföj Underperson</button> *@
-                                        <button @onclick="@(() => ToggleInheritorVisibility (@child))">Tilföj Underperson</button>
-                                    </div>
-                                    @if (child.Inheritors != null && child.Inheritors.Count > 0)
-                                    {
-                                        <ul>
-                                            @foreach (var grandChild in child.Inheritors)
-                                            {
-                                                <li>
-                                                    <div class="member">
-                                                        <span>@grandChild.Name</span>
-                                                        @* <button @onclick="() => Add_Child(child, grandChild)">Tilföj Underperson</button> *@
-                                                        <button @onclick="@(() => ToggleInheritorVisibility (@grandChild))">Tilföj Underperson</button>
-                                                    </div>
-                                                </li>
-                                            }
-                                        </ul>
-                                    }
-                                </li>
-                            }
-                        </ul>
-                    }
-                </li>
-            }
-        </ul>
-    }
+    @RenderPersonTree(@Testatorer)
 </div>
+
+<br />
+<br />
+<br />
+<br />
+
+<br />
+<br />
+<br />
+<br />
+
+<br />
+<br />
+<br />
+<br />
+
+<br />
+<br />
+<br />
+<br />
+
+
+<CirkelDiagram @ref="cirkelDiagram" />
 
 @if (testatorVisible)
 {
-    <CreateTestator @ref="createTestatorRef" OnSubmitCallback="HandleSubmit"></CreateTestator>
+    <CreateTestator @ref="createTestatorRef" OnSubmitCallback="TestatorHandleSubmit"></CreateTestator>
 }
 
 @if (inheritorVisible)
@@ -85,13 +67,81 @@ og saa fortsaetter med at loop'e igennem alle under-elementer (Inheritors for et
     <CreateInheritor @ref="createInheritorRef" OnSubmitCallback="InheritorHandleSubmit"></CreateInheritor>
 }
 
+
+<script>
+    function scrollToElement(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+    console.warn(`Element with id '${elementId}' not found.`);
+    }
+    }
+</script>
+
+
+
+
 @code {
 
-    // Naar siden er loadet...
-    protected override void OnInitialized () {
-        // Her vil vi gerne starte med at bygge vores basis-trae (som har en enkelt testator; paakraevet af vores kode for overhovedet at vise noget)
-        Build_InheritanceTree();
+    // C# method that triggers the JavaScript scroll
+    private async Task ScrollToTestatorForm()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollToElement", "TestatorInputForm");
     }
+
+
+
+
+
+
+    private List<Person> Testatorer = TestatorRepo.GetTestators().Select (x => x as Person).ToList();
+
+    // Metode som auto-genererer ArveTraeet, ud fra en liste af personer
+    // Den gennemgaar og opretter Personerne, og gennemgaar herefter rekursivt deres "Inheritors" (hvis de har nogen ; og derefter, deres Inheritors osv. osv.)
+    private RenderFragment RenderPersonTree(List<Person> persons) => builder =>
+    {
+        if (persons == null || !persons.Any())
+            return;
+
+        builder.OpenElement(0, "ul");
+
+        foreach (var person in persons)
+        {
+            builder.OpenElement(1, "li");
+
+            builder.OpenElement(2, "div");
+            builder.AddAttribute(3, "class", "member");
+
+            builder.OpenElement(4, "span");
+            builder.AddContent(5, person.Name);
+            builder.CloseElement(); // Close span
+
+            builder.OpenElement(6, "button");
+            builder.AddAttribute(7, "onclick", EventCallback.Factory.Create(this, () => ToggleInheritorVisibility(person)));
+            builder.AddContent(8, "Tilføj Underperson");
+            builder.CloseElement(); // Close button
+
+            builder.CloseElement(); // Close div
+
+            if (person.Inheritors != null && person.Inheritors.Any())
+            {
+                // Recursive call for children
+                builder.AddContent(9, RenderPersonTree(person.Inheritors.Select(x => x as Person).ToList()));
+            }
+
+            builder.CloseElement(); // Close li
+        }
+
+        builder.CloseElement(); // Close ul
+    };
+
+
+
+
+
+
+
 
 
 
@@ -100,6 +150,7 @@ og saa fortsaetter med at loop'e igennem alle under-elementer (Inheritors for et
 
     private CreateTestator? createTestatorRef;
     private Person? pendingTestator;
+
     private void ToggleTestatorVisibility(Person theTestatorWeAreCreating)
     {
         testatorVisible = !testatorVisible;
@@ -108,22 +159,23 @@ og saa fortsaetter med at loop'e igennem alle under-elementer (Inheritors for et
         if (testatorVisible) 
         {
             pendingTestator = theTestatorWeAreCreating;
+            ScrollToTestatorForm();
         }
     }
 
-    // Metode der bliver kaldt, naar Testator-formularen's Submit-knap bliver klikket
-    private async Task HandleSubmit()
+    // Metode der bliver kaldt, efter Testator-formularen's Submit-knap bliver klikket
+    private async Task TestatorHandleSubmit()
     {
-        // This is the method that gets triggered from the Submit button inside CreateTestator
-        //Console.WriteLine("Submit clicked on parent page!");
         ToggleTestatorVisibility(null);
+        cirkelDiagram.Update_PieChart();
     }
 
 
-
+    // Variabel saa vi ka' toggle mellem at vise & ikke at vise inheritor-indtastnings-formularen
     private bool inheritorVisible = false;
-    private Person? pendingPerson;
+
     private CreateInheritor? createInheritorRef;
+    private Person? pendingInheritor;
 
     private void ToggleInheritorVisibility(Person thePersonWeAreCreatingInheritorFor)
     {
@@ -131,28 +183,26 @@ og saa fortsaetter med at loop'e igennem alle under-elementer (Inheritors for et
 
         if (inheritorVisible)
         {
-            // Store the person temporarily
-            pendingPerson = thePersonWeAreCreatingInheritorFor;
+            // Opbevar personen midlertidigt, fordi der er tids-/-renderings-forskel mellem vi tilföjer den og komponenten opdaters (bör nok udspecificeres mere)
+            pendingInheritor = thePersonWeAreCreatingInheritorFor;
         }
     }
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (inheritorVisible && createInheritorRef != null && pendingPerson != null)
+        if (inheritorVisible && createInheritorRef != null && pendingInheritor != null)
         {
-            // Now safely set the property
-            createInheritorRef.PersonWeAreMakingAnInheritorFor = pendingPerson;
+            // Vi saetter Testator-parent (PersonWeAreMakingAnInheritorFor) vha. vores 'gemte udgave' (pendingInheritor)
+            createInheritorRef.PersonWeAreMakingAnInheritorFor = pendingInheritor;
 
-            // Clear pending person
-            pendingPerson = null;
+            // Og fjerner dens 'gemte' udgave
+            pendingInheritor = null;
         }
     }
 
     // Metode der bliver kaldt, naar Testator-formularen's Submit-knap bliver klikket
     private async Task InheritorHandleSubmit()
     {
-        // This is the method that gets triggered from the Submit button inside CreateTestator
-        //Console.WriteLine("Submit clicked on parent page!");
         ToggleInheritorVisibility(null);
     }
 
@@ -161,20 +211,7 @@ og saa fortsaetter med at loop'e igennem alle under-elementer (Inheritors for et
 
 
 
-
-
-    private List<Testator> Testators = TestatorRepo.GetTestators();
-    private List<Inheritor> InheritorList;
-
-    void Build_InheritanceTree () {
-        // Build the tree based on testator(s) & inheritortemprepo
-
-        Testators = TestatorRepo.GetTestators(); //new List<Testator>() { new Testator ("Kresten Korbinus") };
-        InheritorList = InheritorTempRepo.GetInheritors();
-    }
-
-    public void Add_Child (Person personToAddTo, Inheritor newInheritoree) {
-        personToAddTo.Inheritors.Add(newInheritoree);
-    }
+    // Vores cirkelDiagram reference, saa vi ka' -- ja, ved faktisk ikke hvoffor den er her :/ To be investigated
+    private CirkelDiagram? cirkelDiagram = new CirkelDiagram();
 
 }

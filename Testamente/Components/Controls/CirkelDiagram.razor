@@ -1,0 +1,205 @@
+﻿@* <h3>CirkelDiagram</h3> *@
+
+<PieChart @ref="pieChart" Width="500" />
+
+@code {
+    public List<string> peoples { get; set; }
+    public List<double?> percentages { get; set; }
+
+    private PieChart pieChart = default!;
+    private PieChartOptions pieChartOptions = default!;
+    private ChartData chartData = default!;
+    private string[]? backgroundColors;
+
+    private int datasetsCount = 0;
+    private int dataLabelsCount = 0;
+
+    private Random random = new();
+
+
+    // Kald den her med de 2 parametre, for at lave din egen cirkeldiagram
+    // NOTE Parametrerne er : Liste af navne der skal vises & Liste af de procenter de bliver tildelt
+    public async Task Create_Specific_PieChart(List<string> personsToShow, List<double?> personPercentages)
+    {
+        pieChart = new PieChart(); // Shouldn't be necessary
+        pieChartOptions = new PieChartOptions();
+        pieChartOptions.Responsive = true;
+        pieChartOptions.Plugins.Title!.Text = "Arv Fordeling";
+        pieChartOptions.Plugins.Title.Display = true;
+
+        //backgroundColors = ColorUtility.CategoricalTwelveColors; // For reference
+        //backgroundColors = new string[] { "ff0000", "ee00ff", "1c00ff", "00fff3", "f000000", "f000000", "f000000", "f000000", "f000000", "f000000", "f000000", "f000000" };
+
+        //List<string> pcdl = new List<string> {"Dan", "Prime", "Jonathan", "Louis'" };
+
+        var datasets = new List<IChartDataset>();
+        string labelOfPieWhenHovered = "Hover Test";// "Set This If You Want";
+                                                    //datasets.Add (new PieChartDataset { Label = $"{labelOfPieWhenHovered}", Data = new List<double?> { 50, 25, 13, 12 }/* , BackgroundColor = new List<string> { "#00ff1a", "#ee00ff", "#1c00ff", "#00fff3" } */ });
+
+        // Et dataset er en af 'indercirklerne' i cirkel-diagrammet
+        datasets.Add(new PieChartDataset { Label = $"{labelOfPieWhenHovered}", Data = personPercentages/* , BackgroundColor = new List<string> { "#00ff1a", "#ee00ff", "#1c00ff", "#00fff3" } */ });
+
+        //chartData = new ChartData { Labels = pcdl /* GetDefaultDataLabels (4) */, Datasets = datasets }; // Test example
+        chartData = new ChartData { Labels = personsToShow, Datasets = datasets };
+    }
+
+    protected override async void OnInitialized()
+    {
+        backgroundColors = ColorUtility.CategoricalTwelveColors;
+        //chartData = new ChartData { Labels = GetDefaultDataLabels(4), Datasets = GetDefaultDataSets(1) };
+
+        var datasets = new List<IChartDataset>();
+        datasets.Add(new PieChartDataset { Label = "RANDOMRANDOM", Data = percentages });
+        chartData = new ChartData { Labels = peoples, Datasets = datasets};
+
+        pieChartOptions = new();
+        pieChartOptions.Responsive = true;
+        pieChartOptions.Plugins.Title!.Text = "Arv Fordeling";
+        pieChartOptions.Plugins.Title.Display = true;
+
+        // This is an example so the page isn't blank
+        //await Create_Specific_PieChart(new List<string> { "Dan", "Dan-2", "Dan-4" }, new List<double?> { 50, 49, 2 });
+
+        Update_PieChart();
+    }
+
+    public async void Update_PieChart () {
+        // Grab the people from the Repo, so we avoid having to manually pass them from Home.razor to this non-routable component's properties
+        peoples = TestatorRepo.GetAllInheritorsRecursively(); //InheritorTempRepo.GetInheritors().Select(person => person.Name).ToList();
+
+        // TODO Get percentages from each individual Inheritor
+        List<double?> debugPercentages = new List<double?>();
+        foreach (string people in peoples)
+            debugPercentages.Add(100f / peoples.Count);
+        percentages = debugPercentages;
+
+        await Create_Specific_PieChart(peoples, percentages);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await pieChart.InitializeAsync(chartData, pieChartOptions);
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task RandomizeAsync()
+    {
+        if (chartData is null || chartData.Datasets is null || !chartData.Datasets.Any()) return;
+
+        var newDatasets = new List<IChartDataset>();
+
+        foreach (var dataset in chartData.Datasets)
+        {
+            if (dataset is PieChartDataset pieChartDataset
+                && pieChartDataset is not null
+                && pieChartDataset.Data is not null)
+            {
+                var count = pieChartDataset.Data.Count;
+
+                var newData = new List<double?>();
+                for (var i = 0; i < count; i++)
+                {
+                    newData.Add(random.Next(0, 100));
+                }
+
+                pieChartDataset.Data = newData;
+                newDatasets.Add(pieChartDataset);
+            }
+        }
+
+        chartData.Datasets = newDatasets;
+
+        await pieChart.UpdateAsync(chartData, pieChartOptions);
+    }
+
+    private async Task AddDatasetAsync()
+    {
+        if (chartData is null || chartData.Datasets is null) return;
+
+        var chartDataset = GetRandomPieChartDataset();
+        chartData = await pieChart.AddDatasetAsync(chartData, chartDataset, pieChartOptions);
+    }
+
+    private async Task AddDataAsync()
+    {
+        if (dataLabelsCount >= 12)
+            return;
+
+        if (chartData is null || chartData.Datasets is null)
+            return;
+
+        var data = new List<IChartDatasetData>();
+        foreach (var dataset in chartData.Datasets)
+        {
+            if (dataset is PieChartDataset pieChartDataset)
+                data.Add(new PieChartDatasetData(pieChartDataset.Label, random.Next(0, 100), backgroundColors![dataLabelsCount]));
+        }
+
+        chartData = await pieChart.AddDataAsync(chartData, GetNextDataLabel(), data);
+
+        dataLabelsCount += 1;
+    }
+
+    #region Data Preparation
+
+    private List<IChartDataset> GetDefaultDataSets(int numberOfDatasets)
+    {
+        var datasets = new List<IChartDataset>();
+
+        for (var index = 0; index < numberOfDatasets; index++)
+        {
+            datasets.Add(GetRandomPieChartDataset());
+        }
+
+        return datasets;
+    }
+
+    private PieChartDataset GetRandomPieChartDataset()
+    {
+        datasetsCount += 1;
+        return new() { Label = $"Team {datasetsCount}", Data = GetRandomData(), BackgroundColor = GetRandomBackgroundColors() };
+    }
+
+    private List<double?> GetRandomData()
+    {
+        var data = new List<double?>();
+        for (var index = 0; index < dataLabelsCount; index++)
+        {
+            data.Add(random.Next(0, 100));
+        }
+
+        return data;
+    }
+
+    private List<string> GetRandomBackgroundColors()
+    {
+        var colors = new List<string>();
+        for (var index = 0; index < dataLabelsCount; index++)
+        {
+            colors.Add(backgroundColors![index]);
+        }
+
+        return colors;
+    }
+
+    private List<string> GetDefaultDataLabels(int numberOfLabels)
+    {
+        var labels = new List<string>();
+        for (var index = 0; index < numberOfLabels; index++)
+        {
+            labels.Add(GetNextDataLabel());
+            dataLabelsCount += 1;
+        }
+
+        return labels;
+    }
+
+    private string GetNextDataLabel() => $"Product {dataLabelsCount + 1}";
+
+    private string GetNextDataBackgrounfColor() => backgroundColors![dataLabelsCount];
+
+    #endregion  Data Preparation
+}

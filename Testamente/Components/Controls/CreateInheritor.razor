@@ -42,18 +42,20 @@
 </EditForm>
 
 @code {
-    public Person PersonWeAreMakingAnInheritorFor { get; set; } = new Person();
     public Inheritor inheritor = new Inheritor();
-    // List<Inheritor> 
+    // Den Testator, som denne nye Inheritor vi er ved at lave, bliver en Inheritor hos
+    public Person PersonWeAreMakingAnInheritorFor { get; set; } = new Person();
 
     async void Add_Inheritor () {
-        //InheritorTempRepo.AddInheritor (inheritor);
         PersonWeAreMakingAnInheritorFor.Inheritors.Add(inheritor);
 
-        // Trigger the event callback to invoke method in the parent component
+        InheritorTempRepo.AddInheritor(inheritor);
+
+        // Hvis vi har en delegate...
         if (OnSubmitCallback.HasDelegate)
         {
-            await OnSubmitCallback.InvokeAsync(); // Trigger the parent's method
+            // ...Kald tilbage ud til Home.razor's InheritorHandleSubmit (delegaten)
+            await OnSubmitCallback.InvokeAsync();
         }
     }
 
