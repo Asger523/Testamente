@@ -6,7 +6,6 @@
     public List<string> peoples { get; set; }
     public List<double?> percentages { get; set; }
 
-
     private PieChart pieChart = default!;
     private PieChartOptions pieChartOptions = default!;
     private ChartData chartData = default!;
@@ -16,7 +15,6 @@
     private int dataLabelsCount = 0;
 
     private Random random = new();
-
 
 
     // Kald den her med de 2 parametre, for at lave din egen cirkeldiagram
@@ -48,7 +46,11 @@
     protected override async void OnInitialized()
     {
         backgroundColors = ColorUtility.CategoricalTwelveColors;
-        chartData = new ChartData { Labels = GetDefaultDataLabels(4), Datasets = GetDefaultDataSets(1) };
+        //chartData = new ChartData { Labels = GetDefaultDataLabels(4), Datasets = GetDefaultDataSets(1) };
+
+        var datasets = new List<IChartDataset>();
+        datasets.Add(new PieChartDataset { Label = "RANDOMRANDOM", Data = percentages });
+        chartData = new ChartData { Labels = peoples, Datasets = datasets};
 
         pieChartOptions = new();
         pieChartOptions.Responsive = true;
@@ -57,6 +59,20 @@
 
         // This is an example so the page isn't blank
         //await Create_Specific_PieChart(new List<string> { "Dan", "Dan-2", "Dan-4" }, new List<double?> { 50, 49, 2 });
+
+        Update_PieChart();
+    }
+
+    public async void Update_PieChart () {
+        // Grab the people from the Repo, so we avoid having to manually pass them from Home.razor to this non-routable component's properties
+        peoples = TestatorRepo.GetAllInheritorsRecursively(); //InheritorTempRepo.GetInheritors().Select(person => person.Name).ToList();
+
+        // TODO Get percentages from each individual Inheritor
+        List<double?> debugPercentages = new List<double?>();
+        foreach (string people in peoples)
+            debugPercentages.Add(100f / peoples.Count);
+        percentages = debugPercentages;
+
         await Create_Specific_PieChart(peoples, percentages);
     }
 
