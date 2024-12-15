@@ -17,6 +17,18 @@
         </InputSelect>
     </div>
     <div class="mb-3">
+        <label for="relationshipStatus" class="form-label">Relationship Status:</label>
+        <InputSelect id="relationshipStatus" @bind-Value="testator.RelationshipStatus" class="form-select" @onchange="CalculatePercentage">
+            <option value="">Select Relationship Status</option>
+            <option value="Sammenboende">Sammen Boende</option>
+            <option value="Gift">Gift</option>
+            <option value="Ugift">Ugift</option>
+            <option value="Eneboende">Eneboende</option>
+            <option value="Ingenbørn">Ingen børn</option>
+            <option value="SammenboendeMedBørn">Sammenboende Mode børn</option>
+        </InputSelect>
+    </div>
+    <div class="mb-3">
         <label for="phoneNumber" class="form-label">Phone Number:</label>
         <InputText id="phoneNumber" @bind-Value="testator.PhoneNumber" class="form-control" placeholder="+45 XXXXXXXX" />
     </div>
@@ -28,7 +40,9 @@
 </EditForm>
 
 @code {
-    Testator testator = new Testator();
+        Testator testator = new Testator();
+        private string? selectedRelationshipStatus = string.Empty;
+        private float? Percentage = 0.0f;        
 
     async Task Submit_New_Testator () {
         TestatorRepo.AddTestator (testator);
@@ -40,14 +54,42 @@
         }
     }
 
-
-
     // "EventCallback" som modtager et event fra "Home.razor"-siden
     // Naar vi saa klikker paa vores Submit-knap, trigger vi det her event
-    // Vi beh�ver dette fordi vores metode til at gemme denne component's form ligger paa Home-pagen (og ikke heri)
+    // Vi beh�ver dette fordi vores metode til at gemme denne component's form ligger paa Home-pagen (og ikke heri)
     // Saa vi "ringer tilbage" for at trigger den, via CallBack'et!
 
     // NOTE Det bliver kaldt opp i "Submit_New_Testator()"
     [Parameter] public EventCallback OnSubmitCallback { get; set; }
+
+
+    private void CalculatePercentage(ChangeEventArgs e)
+    {
+        selectedRelationshipStatus = e.Value.ToString();
+        switch (selectedRelationshipStatus)
+        {
+            case "Sammenboende":
+                Percentage = 0.25f;
+                break;
+            case "Gift":
+                Percentage = 0.50f;
+                break;
+            case "Ugift":
+                Percentage = 0.50f;
+                break;
+            case "Eneboende":
+                Percentage = 0.75f;
+                break;
+            case "Ingenbørn":
+                Percentage = 0.75f;
+                break;
+            case "SammenboendeMedBørn":
+                Percentage = 1.00f;
+                break;
+            default:
+                Percentage = 0.0f;
+                break;
+        }
+    }
 
 }

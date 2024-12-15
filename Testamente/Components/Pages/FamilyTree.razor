@@ -13,7 +13,7 @@
             {
                 <li>
                     <div class="member">
-                        <span>@member.Name</span>
+                        <span>@member.Name (@member.Percentage)</span>
                         <button @onclick="() => AddChild(member)">Add Parent</button>
                     </div>
                     @if (member.Children != null && member.Children.Count > 0)
@@ -23,7 +23,7 @@
                             {
                                 <li>
                                     <div class="member">
-                                        <span>@child.Name</span>
+                                        <span>@child.Name (@child.Percentage)</span>
                                         <button @onclick="() => AddChild(child)">Add Child</button>
                                     </div>
                                     @if (child.Children != null && child.Children.Count > 0)
@@ -33,7 +33,7 @@
                                             {
                                                 <li>
                                                     <div class="member">
-                                                        <span>@grandChild.Name</span>
+                                                        <span>@grandChild.Name (@grandChild.Percentage)</span>
                                                         <button @onclick="() => AddChild(grandChild)">Add Child</button>
                                                     </div>
                                                 </li>
@@ -135,6 +135,8 @@
     {
         public string Name { get; set; }
         public List<FamilyMember> Children { get; set; }
+
+        public double Percentage { get; set; }
     }
 
     private List<FamilyMember> FamilyMembers;
@@ -146,24 +148,27 @@
             new FamilyMember
             {
                 Name = "Grandparent",
+                Percentage = 100,
                 Children = new List<FamilyMember>
                 {
                     new FamilyMember
                     {
                         Name = "Parent",
+                        Percentage = 50,
                         Children = new List<FamilyMember>
                         {
-                            new FamilyMember { Name = "Child 1" },
-                            new FamilyMember { Name = "Child 2" }
+                            new FamilyMember { Name = "Child 1", Percentage = 25 },
+                            new FamilyMember { Name = "Child 2", Percentage = 25 }
                         }
                     },
                     new FamilyMember
                     {
                         Name = "Uncle/Aunt",
+                        Percentage = 50,
                         Children = new List<FamilyMember>
                         {
-                            new FamilyMember { Name = "Cousin 1" },
-                            new FamilyMember { Name = "Cousin 2" }
+                            new FamilyMember { Name = "Cousin 1", Percentage = 25 },
+                            new FamilyMember { Name = "Cousin 2", Percentage = 25 }
                         }
                     }
                 }
