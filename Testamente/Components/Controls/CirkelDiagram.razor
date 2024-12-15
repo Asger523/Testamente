@@ -65,15 +65,23 @@
 
     public async void Update_PieChart () {
         // Grab the people from the Repo, so we avoid having to manually pass them from Home.razor to this non-routable component's properties
-        peoples = TestatorRepo.GetAllInheritorsRecursively(); //InheritorTempRepo.GetInheritors().Select(person => person.Name).ToList();
+        List<Person> allInheritors = TestatorRepo.GetAllInheritorsRecursively(); //InheritorTempRepo.GetInheritors().Select(person => person.Name).ToList();
+
+        List<string> names = new List<string>();
+        List<double?> percents = new List<double?>();
+        foreach (var Person in allInheritors) {
+            names.Add(Person.Name);
+            percents.Add(Person.Percentage);
+        }
 
         // TODO Get percentages from each individual Inheritor
-        List<double?> debugPercentages = new List<double?>();
-        foreach (string people in peoples)
-            debugPercentages.Add(100f / peoples.Count);
-        percentages = debugPercentages;
+        // List<double?> debugPercentages = new List<double?>();
+        // foreach (string people in peoples)
+        //     debugPercentages.Add(100f / peoples.Count);
+        // percentages = debugPercentages;
 
-        await Create_Specific_PieChart(peoples, percentages);
+        //await Create_Specific_PieChart(peoples, percentages);
+        await Create_Specific_PieChart(names, percents);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

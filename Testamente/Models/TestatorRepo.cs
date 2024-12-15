@@ -6,7 +6,13 @@
 
         private static List<Testator> testators = new List<Testator> ()
         {
-            new Testator ("Max", new List<Person>{ new Inheritor("Asker"), new Inheritor ("Dan", new List<Person> { new Inheritor("Dan's Søn")}) })
+            new Testator ("Max", 
+                new List<Person>{
+                    new Inheritor("Doris", newPercentage: 12.5f),
+                    new Inheritor ("Mark", new List<Person> { new Inheritor("Thomas")}, newPercentage: 12.5f) },
+                75f)
+
+
         };
 
         public static void AddTestator (Testator testator)
@@ -16,7 +22,7 @@
 
         public static List<Testator> GetTestators () => testators;
 
-        public static List<string> GetAllInheritorsRecursively ()
+        public static List<Person> GetAllInheritorsRecursively ()
         {
             // Grab everyone (testators + all sub-inheritors (also recursively))!
             List<Person> inheritors = new List<Person> ();
@@ -28,14 +34,8 @@
                     inheritors.Remove (testator);
             }
 
-            // Grab only the names
-            List<string?> inheritorNames = new List<string> ();
-            foreach (var inheritor in inheritors) {
-                inheritorNames.Add (inheritor.Name);
-            }
-
             // Return the names
-            return inheritorNames;
+            return inheritors;
         }
 
         static void CollectPersons (List<Person> persons, List<Person> result)

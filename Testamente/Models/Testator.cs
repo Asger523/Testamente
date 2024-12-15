@@ -45,10 +45,12 @@
         }
 
         // For presentation/testing purposes
-        public Testator (string? newName, List<Person> newInheritors)
+        public Testator (string? newName, List<Person> newInheritors, float newPercentage = 0f)
         {
             Name = newName;
             Inheritors = newInheritors;
+
+            Percentage = newPercentage;
         }
     }
 }

@@ -114,7 +114,14 @@ Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hv
             builder.AddAttribute(3, "class", "member");
 
             builder.OpenElement(4, "span");
-            builder.AddContent(5, person.Name);
+
+            // if (person is Testator)
+            //     builder.AddContent(5, person.Name);
+            // else if (person is Inheritor)
+                // builder.AddContent(5, person.Name + $" ({(person as Inheritor).Percentage} %)");
+
+            builder.AddContent(5, person.Name + $" ({person.Percentage} %)");
+
             builder.CloseElement(); // Close span
 
             builder.OpenElement(6, "button");

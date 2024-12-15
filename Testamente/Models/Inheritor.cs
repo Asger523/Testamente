@@ -11,23 +11,24 @@
         public string? Relation { get; set; }
         public DateOnly? Birthdate { get; set; }
         public string? Address { get; set; }
-        public float Percentage { get; set; }
 
         public Inheritor()
         {
         }
 
         // For presentation/testing purposes
-        public Inheritor (string? name)
+        public Inheritor (string? name, float newPercentage = 0f) // Optional parameter, fordi den staar til sidst + faar en "standardvaerdi"
         {
             Name = name;
+            Percentage = newPercentage;
         }
 
         // For presentation/testing purposes
-        public Inheritor (string? name, List<Person> inheritorees)
+        public Inheritor (string? name, List<Person> inheritorees, float newPercentage = 0f)
         {
             Name = name;
             Inheritors = inheritorees;
+            Percentage = newPercentage;
         }
 
         public Inheritor(string? name, Gender gender, InheritancePriority? inheritancePriority, string? relation, DateOnly? birthdate, string? address)
