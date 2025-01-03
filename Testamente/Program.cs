@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Testamente.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,9 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-
-
 builder.Services.AddBlazorBootstrap ();
+
+builder.Services.AddBlazoredLocalStorageAsSingleton();
 
 var app = builder.Build();
 

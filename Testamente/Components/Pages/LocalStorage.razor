@@ -1,0 +1,23 @@
+﻿@page "/localStorage"
+
+@using Blazored.LocalStorage
+@inject ILocalStorageService LocalStorage
+
+<h3>LocalStorage</h3>
+
+<p>@myVariable</p>
+
+<button @onclick="UpdateLocal">Opdatér</button>
+<button @onclick="InputData">Input</button>
+
+@code {
+    private string myVariable { get; set; } = "Unset";
+
+    async void UpdateLocal () {
+        myVariable = await LocalStorage.GetItemAsync<string>("test");
+    }
+
+    async void InputData () {
+        await LocalStorage.SetItemAsync("test", "affe");
+    }
+}
