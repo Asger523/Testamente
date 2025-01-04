@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Testamente.Components;
+using Testamente.EFDB;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-
+builder.Services.AddDbContext<MyDBContext> (options =>
+{
+    options.UseSqlServer (builder.Configuration.GetConnectionString ("ConnectionString"));
+});
 
 builder.Services.AddBlazorBootstrap ();
 
@@ -27,5 +32,7 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>().
     AddInteractiveServerRenderMode();
+
+
 
 app.Run();
