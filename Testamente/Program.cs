@@ -7,6 +7,16 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 
+builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader());
+});
+
+
 
 builder.Services.AddBlazorBootstrap ();
 
@@ -27,5 +37,13 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>().
     AddInteractiveServerRenderMode();
+
+
+
+
+app.MapControllers();
+app.UseCors("AllowAll");
+
+
 
 app.Run();
