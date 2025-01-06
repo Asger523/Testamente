@@ -1,0 +1,38 @@
+﻿@page "/minForm"
+
+@rendermode InteractiveServer
+
+<h3>MinForm</h3>
+
+<EditForm Model="@MyForm" FormName="MyExamForm" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary></ValidationSummary>
+
+    <label for="NameField">Name :</label>
+    <br />
+    <input type="text" id="NameField" @bind="MyForm.Name"/>
+
+    <br />
+    <br />
+
+    <label for="DescField">Description :</label>
+    <br />
+    <input type="text" id="DescField" @bind="MyForm.Description" />
+    <ValidationMessage For="@(() => MyForm.Description)" />
+
+    <br />
+    <br />
+
+    <button type="submit">Submit!</button>
+    <ValidationMessage For="@(() => MyForm.Name)" />
+</EditForm>
+
+@code {
+    private EFModel MyForm = new EFModel();
+
+    private void HandleSubmit()
+    {
+        // Handle form submission logic here
+        Console.WriteLine($"Submitted Name: {MyForm.Name}, Description: {MyForm.Description}");
+    }
+}
