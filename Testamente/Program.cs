@@ -10,7 +10,17 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddBlazorBootstrap ();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("https://example.com")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod());
+});
+
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -21,6 +31,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Use CORS policy
+app.UseCors("AllowSpecificOrigin");
+
+// Use custom middleware
+app.UseMiddleware<ReqestLogginMiddleware>();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
