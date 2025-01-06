@@ -1,4 +1,5 @@
 using Testamente.Components;
+using Testamente.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.UseMiddleware<CustomMiddleware>();
 
 app.MapRazorComponents<App>().
     AddInteractiveServerRenderMode();
