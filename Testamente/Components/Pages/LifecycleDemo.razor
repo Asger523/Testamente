@@ -1,0 +1,57 @@
+@page "/lifecycle"
+@rendermode InteractiveServer
+
+<h3>Blazor Lifecycle Demo</h3>
+
+<p>@message</p>
+<p>Render Count: @renderCount</p>
+<p>Data: @data</p>
+
+<button @onclick="LoadData">Load Data</button>
+
+@code {
+    private string message = "Initializing...";
+    private int renderCount = 0;
+    private string data;
+
+    protected override void OnInitialized()
+    {
+        message = "Component Initialized";
+        Console.WriteLine("OnInitialized called");
+    }
+
+    protected override void OnParametersSet()
+    {
+        message = "Parameters Set";
+        Console.WriteLine("OnParametersSet called");
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        renderCount++;
+        if (firstRender)
+        {
+            message = "First Render Completed";
+            Console.WriteLine("OnAfterRender called for the first time");
+            StateHasChanged(); // Trigger a re-render to update the message
+        }
+        else
+        {
+            Console.WriteLine("OnAfterRender called");
+        }
+    }
+
+    private async Task LoadData()
+    {
+        message = "Loading data...";
+        await Task.Delay(10); // Simulate data loading
+        data = "Data loaded successfully!";
+        message = "Data Loaded";
+        StateHasChanged(); // Trigger a re-render to update the UI
+    }
+
+    public void Dispose()
+    {
+        Console.WriteLine("Component Disposed");
+    }
+}
