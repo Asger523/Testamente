@@ -7,7 +7,7 @@
     
     public class Inheritor : Person
     {
-        public InheritancePriority? InheritancePriority { get; set; }
+		public InheritancePriority? InheritancePriority { get; set; }
         public string? Relation { get; set; }
         public DateOnly? Birthdate { get; set; }
         public string? Address { get; set; }

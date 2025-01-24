@@ -129,6 +129,10 @@ Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hv
             builder.AddContent(8, "Tilføj Underperson");
             builder.CloseElement(); // Close button
 
+            builder.OpenElement(9, "button");
+            builder.AddContent(9, "slet Underperson");
+            builder.CloseElement(); // Close button
+
             builder.CloseElement(); // Close div
 
             if (person.Inheritors != null && person.Inheritors.Any())
