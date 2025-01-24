@@ -3,6 +3,8 @@
 
 @inject IJSRuntime JSRuntime
 
+@inject MyDbContext context
+
 <PageTitle>Arvetræ</PageTitle>
 
 <h1>Velkommen!</h1>
@@ -24,6 +26,10 @@ Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hv
 @* <Button class="btn btn-primary" @onclick="Build_InheritanceTree">Opdatér ArveTrae</Button> *@
 
 <button @onclick="() => {ScrollToTestatorForm(); ToggleTestatorVisibility(null); }">Tilføj Testator</button>
+
+<button @onclick="AddPersonToDb">Add person to db</button> 
+
+
 
 @* <br />
 <br />
@@ -91,7 +97,18 @@ Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hv
     }
 
 
+    private async Task AddPersonToDb()
+    {
+        Langelænder langelænder = new Langelænder();
+        langelænder.Name = "Langelænder";
+        langelænder.Email = "langelænge@langelænge.dk";
+        langelænder.PhoneNumber = "12345678";
+        langelænder.Birthday = "April";
 
+        await context.langelænders.AddAsync(langelænder);
+        await context.SaveChangesAsync();
+        
+    }
 
 
 
