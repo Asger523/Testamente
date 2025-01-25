@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 
 @inject IJSRuntime JSRuntime
+@inject DbContext context
 
 <PageTitle>Arvetræ</PageTitle>
 
@@ -24,6 +25,7 @@ Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hv
 @* <Button class="btn btn-primary" @onclick="Build_InheritanceTree">Opdatér ArveTrae</Button> *@
 
 <button @onclick="() => {ScrollToTestatorForm(); ToggleTestatorVisibility(null); }">Tilføj Testator</button>
+<Button @onclick=AddUnderPersonToDB>Add to Db</Button>
 
 @* <br />
 <br />
@@ -91,7 +93,13 @@ Indskriv dig selv og dine nærmeste og se hvordan du arven bliver fordelt, og hv
     }
 
 
+    public async Task AddUnderPersonToDB()
+    {
+        
 
+
+        
+    }
 
 
 
